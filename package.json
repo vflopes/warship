@@ -1,0 +1,34 @@
+{
+  "name": "warship",
+  "version": "1.0.0",
+  "description": "A warship prepared to the event sourcing battle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vflopes/warship.git"
+  },
+  "keywords": [
+    "microservices",
+    "redis",
+    "event",
+    "sourcing",
+    "queue"
+  ],
+  "author": "Victor França Lopes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vflopes/warship/issues"
+  },
+  "homepage": "https://github.com/vflopes/warship#readme",
+  "dependencies": {
+    "bufferutil": "^4.0.0",
+    "dotenv": "^6.1.0",
+    "redis": "^2.8.0",
+    "shortid": "^2.2.13",
+    "utf-8-validate": "^5.0.1",
+    "ws": "^6.1.0"
+  }
+}
