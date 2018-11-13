@@ -26,7 +26,7 @@
   "dependencies": {
     "bufferutil": "^4.0.0",
     "dotenv": "^6.1.0",
-    "redis": "^2.8.0",
+    "polka": "^0.5.1",
     "shortid": "^2.2.13",
     "utf-8-validate": "^5.0.1",
     "ws": "^6.1.0"
