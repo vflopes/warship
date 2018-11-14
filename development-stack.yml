@@ -1,0 +1,21 @@
+version: "3.6"
+
+networks:
+  warship_net:
+    external: true
+services:
+  warship:
+    image: node:10
+    command: node index.js
+    working_dir: /opt/app
+    tty: true
+    environment:
+      - LOG_LEVEL=TRACE
+      - TERM=xterm-256color
+    volumes:
+      - ./:/opt/app
+    networks:
+      - warship_net
+    deploy:
+      mode: replicated
+      replicas: 1
