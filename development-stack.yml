@@ -4,13 +4,26 @@ networks:
   warship_net:
     external: true
 services:
-  warship:
+  warship_mp:
     image: node:10
-    command: node index.js
+    command: node test/method-processor.js
     working_dir: /opt/app
     tty: true
     environment:
-      - LOG_LEVEL=TRACE
+      - TERM=xterm-256color
+    volumes:
+      - ./:/opt/app
+    networks:
+      - warship_net
+    deploy:
+      mode: replicated
+      replicas: 1
+  warship_pi:
+    image: node:10
+    command: node test/payload-issuer.js
+    working_dir: /opt/app
+    tty: true
+    environment:
       - TERM=xterm-256color
     volumes:
       - ./:/opt/app

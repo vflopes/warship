@@ -1,12 +1,13 @@
 'use strict';
-const EventEmitter = require('events');
 const shortid = require('shortid');
+const AsyncEventEmitter = require('./lib/async-event-emitter.js');
 const Receiver = require('./lib/receiver.js');
 const Messenger = require('./lib/messenger.js');
 const RedisCollection = require('./lib/redis-collection.js');
 const MethodProcessor = require('./lib/method-processor.js');
+const messageFactory = require('./lib/message-factory.js');
 
-class Warship extends EventEmitter {
+class Warship extends AsyncEventEmitter {
 
 	constructor ({namespace} = {}, redisOptions = {}) {
 
@@ -20,10 +21,11 @@ class Warship extends EventEmitter {
 				get:(receivers, name) => {
 					if (!receivers.has(name))
 						receivers.set(
-							name, 
+							name,
 							new Receiver(
 								{
 									namespace:this._namespace,
+									messageDecorator:(message) => this._messageDecorator(message),
 									name
 								},
 								this._redis
@@ -45,11 +47,10 @@ class Warship extends EventEmitter {
 							},
 							this._redis
 						);
-						processor.configure({method:name}).on('message', (message) => {
-							message.ack = async () => await processor.ack(message);
-							message.forward = async () => await this._messenger.forward(message);
-							message.resolve = async (ttl = 0) => await this._messenger.resolve(message, ttl);
-							message.reject = async (ttl = 0) => await this._messenger.reject(message, ttl);
+						processor.configure({method:name}).on('message.received', (message) => {
+							this._messageDecorator(message, {processor});
+							this.emit('message.pending', message);
+							processor.emit('message.pending', message);
 						});
 						receivers.set(
 							name,
@@ -60,7 +61,31 @@ class Warship extends EventEmitter {
 				}
 			}
 		);
+		this._messageProxy = new Proxy(
+			{},
+			{
+				get:(target, method) => (payload = null) => {
+					const message = messageFactory({method, payload}, false);
+					message.forward = async () => await this._messenger.forward(message);
+					return message;
+				}
+			}
+		);
 
+	}
+
+	_messageDecorator (message, {processor} = {}) {
+		if (processor)
+			message.ack = async () => await processor.ack(message);
+		message.load = async (...fields) => await this._messenger.dispatcher.load(message, ...fields);
+		message.forward = async () => await this._messenger.forward(message);
+		message.resolve = async (ttl = 0) => await this._messenger.resolve(message, ttl);
+		message.reject = async (ttl = 0) => await this._messenger.reject(message, ttl);
+		return message;
+	}
+
+	get message () {
+		return this._messageProxy;
 	}
 
 	get receivers () {

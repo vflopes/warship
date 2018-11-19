@@ -1,15 +1,6 @@
-### Events
+# Warship
 
-##### Types
+Warship is a framework to build distributed systems (a.k.a microservices) aided by event sourcing and task queueing strategies using Redis as core engine. This package is the core to operate an endpoint as **payload issuer** or **method processor** or both (although is not recommended). But first let's introduce some terms and concepts adopted in Warship environment:
 
-* Task (t)
-* Acknowledge (a)
-* Register (r)
-* Feedback (f)
-
-##### Feedback fields
-
-* Cache (c) = Caches response for time in seconds
-* Next (n) = Next method to send the task
-* Mutate Payload (mp) = Mutate the task payload
-* Done (pd) = The task is done and the response should be returned
+* **Payload Issuer** - an endpoint or system that issues named payloads (event sourcing) that can be handled or used by other systems and services, sometimes these payloads mean jobs/tasks. A **payload issuer** can be compared to event emitters or producers (as seen in Apache Kafka TM). Examples of **PIs**: **RESTful APIs**, **RPC APIs**.
+* **Method Processor** - a service that can handle tasks/jobs or uses a payload issued by other endpoints as event source to trigger business domain flows. A **method processor** can be compared to consumers (Apache Kafka TM), event listeners.

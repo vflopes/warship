@@ -1,10 +1,12 @@
 {
-  "name": "warship",
+  "name": "@warshipjs/core",
   "version": "1.0.0",
   "description": "A warship prepared to the event sourcing battle",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "./node_modules/.bin/eslint --fix ./",
+    "test": "mocha \"./test/**/*.spec.js\"",
+    "postinstall": "rm -rf node_modules/ioredis/built/cluster/index.js && cp fix/ioredis-cluster-index.js node_modules/ioredis/built/cluster/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,10 @@
   "dependencies": {
     "ioredis": "^4.2.0",
     "shortid": "^2.2.13"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "mocha": "^5.2.0"
   }
 }

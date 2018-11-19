@@ -1,0 +1,48 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-trailing-spaces": ["error"],
+        "no-nested-ternary": ["error"],
+        "comma-dangle": ["error", "never"],
+        "comma-style": ["error", "last"],
+        "comma-spacing": ["error", {
+            "before": false,
+            "after": true
+        }],
+        "no-duplicate-case": ["error"],
+        "no-empty-character-class": ["error"],
+        "no-empty": ["error"],
+        "no-array-constructor": ["error"],
+        "no-inner-declarations": ["error"],
+        "no-useless-concat": ["error"],
+        "no-useless-call": ["error"],
+        "no-unreachable": ["error"],
+        "no-shadow": ["error"],
+        "yoda": ["error"],
+        "no-negated-in-lhs": ["error"],
+        "vars-on-top": ["error"],
+        "no-sequences": ["error"],
+        "no-magic-numbers": ["error", {
+            "ignore": [0, 1, 2, -1]
+        }],
+        "no-multi-spaces": ["error"],
+        "no-eval": ["error"],
+        "indent": ["error", "tab"],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "max-len": ["error", {
+            "code": 120,
+            "ignoreStrings": true,
+            "ignoreComments": true,
+            "ignoreTemplateLiterals": true
+        }]
+    }
+}
