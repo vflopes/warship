@@ -2,7 +2,7 @@
 const Warship = require('../');
 const {expect} = require('chai');
 
-describe('Multiple Method Processor', function () {
+describe('Payload Issuer', function () {
 
 	var methodProcessor;
 	var payloadIssuer;
@@ -14,26 +14,32 @@ describe('Multiple Method Processor', function () {
 	});
 
 	afterEach(async function () {
-		await methodProcessor.methods.sum.stop();
+		await methodProcessor.stop();
+		await payloadIssuer.stop();
 	});
 
-	it('Should process messages', function (done) {
+	it('Should receive message feedback', function (done) {
+
+		const payload = {
+			x:Math.random(),
+			y:Math.random()
+		};
 
 		methodProcessor.methods.sum.onAwait('message.pending', async (message) => {
 			message = await message.load();
-			expect(message.payload).to.be.an('object');
-			expect(message.payload.x).to.be.a('number');
-			expect(message.payload.y).to.be.a('number');
 			message.payload = {z:message.payload.x+message.payload.y};
 			await message.ack();
 			await message.resolve();
-			done();
 		}).on('error.async', (event, error) => done(error)).run();
 
-		payloadIssuer.message.sum({
-			x:Math.random(),
-			y:Math.random()
-		}).forward().catch(done);
+		payloadIssuer.receivers.sum.onAwait('sum', async (message) => {
+			expect(message.payload).to.be.an('object');
+			expect(message.payload.z).to.be.a('number');
+			expect(message.payload.z).to.be.equal(payload.x+payload.y);
+			done();
+		}).on('error.async', (event, error) => done(error)).listen('sum').then(() => {
+			payloadIssuer.message.sum(payload).forward().catch(done);
+		}).catch((error) => done(error));
 
 	});
 

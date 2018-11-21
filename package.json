@@ -1,11 +1,13 @@
 {
   "name": "@warshipjs/core",
   "version": "1.0.0",
-  "description": "A warship prepared to the event sourcing battle",
+  "description": "Event sourcing framework for independent services (a.k.a microservices)",
   "main": "index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint --fix ./",
-    "test": "mocha \"./test/**/*.spec.js\"",
+    "test": "bash test/run.sh",
+    "test:integration": "mocha \"./test/**/*.spec.js\"",
+    "serve:docs": "node_modules/.bin/docsify serve ./docs",
     "postinstall": "rm -rf node_modules/ioredis/built/cluster/index.js && cp fix/ioredis-cluster-index.js node_modules/ioredis/built/cluster/index.js"
   },
   "repository": {
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "docsify-cli": "^4.3.0",
     "eslint": "^5.9.0",
     "mocha": "^5.2.0"
   }

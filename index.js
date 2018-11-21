@@ -6,6 +6,7 @@ const Messenger = require('./lib/messenger.js');
 const RedisCollection = require('./lib/redis-collection.js');
 const MethodProcessor = require('./lib/method-processor.js');
 const messageFactory = require('./lib/message-factory.js');
+const shortKeys = require('./lib/short-keys.js');
 
 class Warship extends AsyncEventEmitter {
 
@@ -13,64 +14,8 @@ class Warship extends AsyncEventEmitter {
 
 		super();
 		this._namespace = namespace || 'warship';
-		this._redis = new RedisCollection(redisOptions);
-		this._messenger = new Messenger({namespace:this._namespace}, this._redis);
-		this._receiversProxy = new Proxy(
-			new Map(),
-			{
-				get:(receivers, name) => {
-					if (!receivers.has(name))
-						receivers.set(
-							name,
-							new Receiver(
-								{
-									namespace:this._namespace,
-									messageDecorator:(message) => this._messageDecorator(message),
-									name
-								},
-								this._redis
-							)
-						);
-					return receivers.get(name);
-				}
-			}
-		);
-		this._methodsProxy = new Proxy(
-			new Map(),
-			{
-				get:(receivers, name) => {
-					if (!receivers.has(name)) {
-						const processor = new MethodProcessor(
-							{
-								namespace:this._namespace,
-								name:name+':'+shortid.generate()
-							},
-							this._redis
-						);
-						processor.configure({method:name}).on('message.received', (message) => {
-							this._messageDecorator(message, {processor});
-							this.emit('message.pending', message);
-							processor.emit('message.pending', message);
-						});
-						receivers.set(
-							name,
-							processor
-						);
-					}
-					return receivers.get(name);
-				}
-			}
-		);
-		this._messageProxy = new Proxy(
-			{},
-			{
-				get:(target, method) => (payload = null) => {
-					const message = messageFactory({method, payload}, false);
-					message.forward = async () => await this._messenger.forward(message);
-					return message;
-				}
-			}
-		);
+		this._redisOptions = redisOptions;
+		this.reset();
 
 	}
 
@@ -104,6 +49,80 @@ class Warship extends AsyncEventEmitter {
 		return this._redis;
 	}
 
+	async stop (force = false) {
+		await this._redis.stop(force);
+	}
+
+	reset () {
+
+		this._redis = new RedisCollection(this._redisOptions);
+		this._messenger = new Messenger({namespace:this._namespace}, this._redis);
+
+		this._receiversProxy = new Proxy(
+			new Map(),
+			{
+				get:(receivers, name) => {
+					if (!receivers.has(name))
+						receivers.set(
+							name,
+							new Receiver(
+								{
+									namespace:this._namespace,
+									messageDecorator:(message) => this._messageDecorator(message),
+									name
+								},
+								this._redis
+							)
+						);
+					return receivers.get(name);
+				}
+			}
+		);
+
+		this._methodsProxy = new Proxy(
+			new Map(),
+			{
+				get:(receivers, name) => {
+					if (!receivers.has(name)) {
+						const processor = new MethodProcessor(
+							{
+								namespace:this._namespace,
+								name:name+':'+shortid.generate()
+							},
+							this._redis
+						);
+						processor.configure({method:name}).on('message.received', (message) => {
+							this._messageDecorator(message, {processor});
+							this.emit('message.pending', message);
+							processor.emit('message.pending', message);
+						});
+						receivers.set(
+							name,
+							processor
+						);
+					}
+					return receivers.get(name);
+				}
+			}
+		);
+
+		this._messageProxy = new Proxy(
+			{},
+			{
+				get:(target, method) => (payload = null) => {
+					const message = messageFactory({method, payload}, false);
+					message.forward = async () => await this._messenger.forward(message);
+					return message;
+				}
+			}
+		);
+
+		return this;
+	}
+
 }
+
+Warship.shortKeys = shortKeys;
+Warship.AsyncEventEmitter = AsyncEventEmitter;
 
 module.exports = Warship;
