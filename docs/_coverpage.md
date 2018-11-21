@@ -10,6 +10,7 @@
 - Protocol and standard agnostic (REST, RPC)
 - Native task queue and single delivery (Redis Pub/Sub and Streams)
 
+[NPM](https://www.npmjs.com/package/@warshipjs/core)
 [GitHub](https://github.com/vflopes/warship)
 
 <!-- background color -->
