@@ -22,6 +22,12 @@ Publishes the resulting state of a message (resolved or rejected). This method i
 
 ---------------------------------
 
+#### dispatcher.generateMessageId(message)
+
+Generate a new message ID for a message renewing the unique ID. If the message already have an unique ID then the cache is renamed. This mehtod is asynchronous.
+
+---------------------------------
+
 #### dispatcher.dispatch(message)
 
 Dispatches a message into the Redis stream of a method, it's effectively forwarding a message. This method is asynchronous.

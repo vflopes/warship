@@ -6,3 +6,57 @@ Warship is a framework to build distributed systems (a.k.a microservices) aided 
 * **Method Processor** - a service that can handle tasks/jobs or uses a payload issued by other endpoints as event source to trigger business domain flows. A **method processor** can be compared to consumers (Apache Kafka TM), event listeners.
 
 ---------------------------------
+
+##### How Warship uses Redis as endpoint for Event Sourcing?
+
+Warship uses commons Redis data types like `Hashes`, `Strings`, `Streams`, `Pub/Sub` to achieve the complete control of payload flow through a environment containing services able to resolve jobs or do any kind of data processing. Warship expects the following actors:
+
+- **Client** - an outer system or human that create jobs or named payloads destinated to a Warship namespace.
+- **Payload Issuer** - as the name denotes, a service that issues payloads, the importance here is that each payload is named with a method and identified by a message ID and a tracker ID.
+- **Method Processor** - a service that knows something about a a business domain or data processing logic and can reject, resolve or prepare (re-forward) payloads and/or jobs.
+- **Duplex Service** - a service acting as a **Payload Issuer** and a **Method Processor** at the same time.
+
+---------------------------------
+
+##### The message flow
+
+The basic message flow from **Client** to **Method Processor**. If you want to receive the feedback from the message processing in the **Payload Issuer** you just need to listen for the **out** channel of the message method.
+
+```
++-------------------------------------------------------------------+
+|                               Client                              |
++-------------------------------------------------------------------+
+|                                                                   |
+|    Requests through RESTful/RPC/* any protocol and interface      |
+|                                                                   |
++---------+---------------------------------------------------------+
+          |
+          |
+          |
++---------v----------+
+|   Payload Issuer   |   Set the message cache
++--------------------+           (HMSET)           +----------------+
+|                    +----------------------------->                |
+|                    |    Adds the message to      |                |
+|                    |     the method stream       |                |
+|Generates Tracker ID+----------------------------->                |
+|   and Message ID   |   Publishes the message     |                |
+|                    |     into in:* channel       |                |
+|                    +----------------------------->                |
++--------------------+                             |                |
+                                                   |Redis Standalone|
++--------------------+                             |      or        |
+|  Method Processor  |     Receives the message    | Redis Cluster  |
++--------------------+         from stream         |                |
+|                    <-----------------------------+                |
+|                    |   Acknowledge the message   |                |
+|                    +----------------------------->                |
+|Process the payload |     Drops the message       |                |
+|(business logic or  |     cache or sets TTL       |                |
+| data processing)   +----------------------------->                |
+|                    |    Publish the resolved/    |                |
+|                    |    rejected message into    |                |
+|                    |        out:* channel        |                |
+|                    +----------------------------->                |
++--------------------+                             +----------------+
+```

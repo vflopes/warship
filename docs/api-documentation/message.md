@@ -127,9 +127,9 @@ Loads message from forward state cache. The arguments are fields of the message 
 
 ---------------------------------
 
-#### <small>decorated:</small> message.forward()
+#### <small>decorated:</small> message.forward([keepHistory])
 
-Asynchrononous function to forward the message to a method.
+Asynchrononous function to forward the message to a method. The `keepHistory` boolean (default `false`) indicates to `Messenger` that if there are any cache in Redis repesented by the `unique_id` of the message, this cache should be dropped before generating the new `unique_id` (by generating a new `message_id`). If this argument is `true` this behavior is disabled.
 
 ---------------------------------
 

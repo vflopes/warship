@@ -8,7 +8,7 @@
     "test": "bash test/run.sh",
     "test:integration": "mocha \"./test/**/*.spec.js\"",
     "serve:docs": "node_modules/.bin/docsify serve ./docs",
-    "postinstall": "rm -rf node_modules/ioredis/built/cluster/index.js && cp fix/ioredis-cluster-index.js node_modules/ioredis/built/cluster/index.js"
+    "postinstall": "node ./fix"
   },
   "repository": {
     "type": "git",

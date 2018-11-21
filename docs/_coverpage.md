@@ -5,8 +5,8 @@
 ### `npm i --save @warshipjs/core`
 
 - Backed by Redis 5+ and NodeJS 10+
-- Protocol and Standard Agnostic (REST, RPC)
-- Native Task Queue and Single Delivery (Redis Pub/Sub and Streams)
+- Protocol and standard agnostic (REST, RPC)
+- Native task queue and single delivery (Redis Pub/Sub and Streams)
 
 [GitHub](https://github.com/vflopes/warship)
 

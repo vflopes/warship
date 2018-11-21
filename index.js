@@ -23,7 +23,7 @@ class Warship extends AsyncEventEmitter {
 		if (processor)
 			message.ack = async () => await processor.ack(message);
 		message.load = async (...fields) => await this._messenger.dispatcher.load(message, ...fields);
-		message.forward = async () => await this._messenger.forward(message);
+		message.forward = async (keepHistory = false) => await this._messenger.forward(message, keepHistory);
 		message.resolve = async (ttl = 0) => await this._messenger.resolve(message, ttl);
 		message.reject = async (ttl = 0) => await this._messenger.reject(message, ttl);
 		return message;
@@ -111,7 +111,7 @@ class Warship extends AsyncEventEmitter {
 			{
 				get:(target, method) => (payload = null) => {
 					const message = messageFactory({method, payload}, false);
-					message.forward = async () => await this._messenger.forward(message);
+					message.forward = async (keepHistory = false) => await this._messenger.forward(message, keepHistory);
 					return message;
 				}
 			}

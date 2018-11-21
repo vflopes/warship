@@ -32,12 +32,12 @@ describe('Payload Issuer', function () {
 			await message.resolve();
 		}).on('error.async', (event, error) => done(error)).run();
 
-		payloadIssuer.receivers.sum.onAwait('sum', async (message) => {
+		payloadIssuer.receivers.sum.onAwait('out.sum', async (message) => {
 			expect(message.payload).to.be.an('object');
 			expect(message.payload.z).to.be.a('number');
 			expect(message.payload.z).to.be.equal(payload.x+payload.y);
 			done();
-		}).on('error.async', (event, error) => done(error)).listen('sum').then(() => {
+		}).on('error.async', (event, error) => done(error)).fromOut('sum').listen().then(() => {
 			payloadIssuer.message.sum(payload).forward().catch(done);
 		}).catch((error) => done(error));
 
