@@ -13,6 +13,7 @@ describe('RedisCollection', function () {
 
 	beforeEach(async function () {
 		redis = new RedisCollection({port:6379, host:'127.0.0.1'});
+		await redis.clients.flushClient.flushdb();
 		dispatcher = new Dispatcher('test-warship', redis);
 		message = messageFactory({payload:Math.random()}, false);
 		message.message_id = shortid.generate();
@@ -125,11 +126,11 @@ describe('RedisCollection', function () {
 
 	});
 
-	it('Should publish into out:* channel', async function (done) {
+	it('Should publish into out:* channel', function (done) {
 
 		dispatcher.update(message).then(() => {
 
-			redis.clients.testSubscriber.on('message', (channel, shortenedMessage) => {
+			redis.clients.testOutSubscriber.on('message', (channel, shortenedMessage) => {
 				try {
 					expect(channel).to.be.equal('test-warship:out:testMethod')
 					const receivedMessage = messageFactory(JSON.parse(shortenedMessage));
@@ -140,7 +141,7 @@ describe('RedisCollection', function () {
 				}
 			});
 
-			redis.clients.testSubscriber.subscribe('test-warship:out:testMethod').then(() => {
+			redis.clients.testOutSubscriber.subscribe('test-warship:out:testMethod').then(() => {
 				message.method = 'testMethod';
 				return dispatcher.giveBack(message);
 			}).catch(done);
@@ -149,11 +150,11 @@ describe('RedisCollection', function () {
 
 	});
 
-	it('Should publish into in:* channel', async function (done) {
+	it('Should publish into in:* channel', function (done) {
 
 		dispatcher.update(message).then(() => {
 
-			redis.clients.testSubscriber.on('message', (channel, shortenedMessage) => {
+			redis.clients.testInSubscriber.on('message', (channel, shortenedMessage) => {
 				try {
 					expect(channel).to.be.equal('test-warship:in:testMethod')
 					const receivedMessage = messageFactory(JSON.parse(shortenedMessage));
@@ -164,7 +165,7 @@ describe('RedisCollection', function () {
 				}
 			});
 
-			redis.clients.testSubscriber.subscribe('test-warship:in:testMethod').then(() => {
+			redis.clients.testInSubscriber.subscribe('test-warship:in:testMethod').then(() => {
 				message.method = 'testMethod';
 				return dispatcher.dispatch(message);
 			}).catch(done);
@@ -173,26 +174,20 @@ describe('RedisCollection', function () {
 
 	});
 
-	it('Should add message into stream', async function (done) {
+	it('Should add message into stream', function (done) {
 
 		dispatcher.update(message).then(() => {
 
-			redis.clients.testSubscriber.on('message', (channel, shortenedMessage) => {
+			message.method = 'testMethod';
+			dispatcher.dispatch(message).then(() => {
+				return redis.clients.testStream.xlen('test-warship:testMethod:in');
+			}).then((streamSize) => {
 				try {
-					expect(channel).to.be.equal('test-warship:in:testMethod')
-					const receivedMessage = messageFactory(JSON.parse(shortenedMessage));
-					expect(message.unique_id).to.be.equal(receivedMessage.unique_id);
+					expect(streamSize).to.be.equal(1);
 					done();
-				} catch (error) {
+				} catch(error) {
 					done(error);
 				}
-			});
-
-			redis.clients.testSubscriber.subscribe('test-warship:in:testMethod').then(() => {
-				message.method = 'testMethod';
-				return dispatcher.dispatch(message);
-			}).then(() => {
-				return redis.
 			}).catch(done);
 
 		}).catch(done);

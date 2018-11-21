@@ -8,6 +8,7 @@ describe('RedisCollection', function () {
 
 	beforeEach(async function () {
 		redis = new RedisCollection({port:6379, host:'127.0.0.1'});
+		await redis.clients.flushClient.flushdb();
 	});
 
 	afterEach(async function () {

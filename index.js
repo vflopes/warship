@@ -111,7 +111,9 @@ class Warship extends AsyncEventEmitter {
 			{
 				get:(target, method) => (payload = null) => {
 					const message = messageFactory({method, payload}, false);
-					message.forward = async (keepHistory = false) => await this._messenger.forward(message, keepHistory);
+					message.forward =
+						async (keepHistory = false) =>
+							await this._messenger.forward(message, keepHistory);
 					return message;
 				}
 			}
