@@ -1,3 +1,5 @@
+![logo](_media/logo.svg)
+
 # Warship <small>1.0</small>
 
 *Event sourcing framework for independent services (a.k.a microservices)*
