@@ -13,3 +13,5 @@
 	- [MethodProcessor](api-documentation/method-processor.md)
 	- [Receiver](api-documentation/receiver.md)
 	- [RedisCollection](api-documentation/redis-collection.md)
+
+- [Roadmap](roadmap.md)
