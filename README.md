@@ -24,7 +24,7 @@ npm install --save @warshipjs/core
 
 ### Documentation
 
-See [Warship](https://vflopes.github.io/warship/#/)
+See [Warship](https://warship.js.org/)
 
 ----------------------
 
