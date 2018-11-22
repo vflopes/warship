@@ -28,6 +28,15 @@ See [Warship](https://warship.js.org/)
 
 ----------------------
 
+### The "fix" folder
+
+Warship uses [ioredis](https://github.com/luin/ioredis) and I discovered a bug when it uses Redis Cluster. The issue is [here](https://github.com/luin/ioredis/issues/748) and the pull request [here](https://github.com/luin/ioredis/pull/749). **Until the fix is not merged in a minor version**, Warship will replace a file in **ioredis** applying the fix. So it's important to know:
+
+- Warship will modify **ioredis** files.
+- Warship will change the **ioredis** Redis class prototype to add Redis Streams commands.
+
+----------------------
+
 ### Testing
 
 The tests use Docker, so be sure that your user can run `redis:5` image.
