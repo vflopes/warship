@@ -6,7 +6,7 @@ Dispatcher is a helper class that handles the interaction of Redis with Warship.
 
 #### dispatcher.load(message[, ...fields])
 
-This is an asynchronous method to load messages from cache. The first parameter must be a [Message](api-documentation/message.md) with the `unique_id` defined to load the message. If `fields` are specified then only those fields are loaded, otherwise all fields are loaded.
+This is an asynchronous method to load messages from cache. The first parameter must be a [Message](api-documentation/message.md) with the `unique_id` defined to load the message or only the `tracker_id`. If the `message_id` field is not defined, this method will try to search for the message by `tracker_id`. If `fields` are specified then only those fields are loaded, otherwise all fields are loaded.
 
 ---------------------------------
 

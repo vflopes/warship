@@ -47,6 +47,27 @@ Stops the receiver (unsubscribe from channels). The `force` argument tells the r
 
 ---------------------------------
 
+#### receiver.processed(message[, method])
+
+This is an asynchronous method to await for messages to be resolved or rejected, you can optionally specify a method which the message should be resolved or rejected.
+
+```javascript
+receiver.processed(message).then(() => console.log(message.state)).catch(() => console.log('canceled'));
+```
+
+---------------------------------
+
+#### receiver.cancel(message[, method])
+
+This method cancel all `Receiver.processed` calls from a message (by `tracker_id`), optionally you can cancel only for the specified method. The `Receiver.processed` will be rejected without error.
+
+```javascript
+receiver.processed(message).catch(() => console.log('canceled'));
+receiver.cancel(message);
+```
+
+---------------------------------
+
 #### Events: '[in|out].[state]', '[in|out].[method]', '[in|out].[state]:[method]'
 
 All these events are fired with a decorated message (see [Message](api-documentation/message.md)) when a new event from channel is received by Receiver's subscriber.
