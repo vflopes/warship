@@ -52,7 +52,7 @@ Stops the receiver (unsubscribe from channels). The `force` argument tells the r
 This is an asynchronous method to await for messages to be resolved or rejected, you can optionally specify a method which the message should be resolved or rejected.
 
 ```javascript
-receiver.processed(message).then(() => console.log(message.state)).catch(() => console.log('canceled'));
+receiver.processed(message).then((message) => console.log(message.state)).catch(() => console.log('canceled'));
 ```
 
 ---------------------------------
