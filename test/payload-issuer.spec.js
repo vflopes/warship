@@ -43,4 +43,43 @@ describe('Payload Issuer', function () {
 
 	});
 
+	it('Should receive message feedback from one message (resolved)', function (done) {
+
+		const payload = {
+			x:Math.random(),
+			y:Math.random()
+		};
+
+		methodProcessor.methods.sum.onAwait('message.pending', async (message) => {
+			message = await message.load();
+			message.payload = {z:message.payload.x+message.payload.y};
+			await message.ack();
+			await message.resolve();
+		}).on('error.async', (event, error) => done(error)).run();
+
+		payloadIssuer.receivers.sum.fromOut('sum').listen().then(() => {
+			const message = payloadIssuer.message.sum(payload);
+			message.generateTrackerId();
+			payloadIssuer.receivers.sum.processed(message).then(() => done());
+			return message.forward();
+		}).catch((error) => done(error));
+
+	});
+
+	it('Should receive message feedback from one message (rejected)', function (done) {
+
+		const payload = {
+			x:Math.random(),
+			y:Math.random()
+		};
+
+		payloadIssuer.receivers.sum.fromOut('sum').listen().then(() => {
+			const message = payloadIssuer.message.sum(payload);
+			message.generateTrackerId();
+			payloadIssuer.receivers.sum.processed(message).catch(() => done());
+			payloadIssuer.receivers.sum.cancel(message);
+		}).catch((error) => done(error));
+
+	});
+
 });

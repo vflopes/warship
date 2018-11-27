@@ -36,7 +36,7 @@ Constructor of [AsyncEventEmitter](api-documentation/async-event-emitter.md).
 
 #### warship.message
 
-This **Proxy** is a [Message](api-documentation/message.md) instance builder. The only method decorated in the message is `forward()`. The name accessed in this **Proxy** is used as the method name of the message:
+This **Proxy** is a [Message](api-documentation/message.md) instance builder. The only methods decorated in the message are `forward()` and `load()`. The name accessed in this **Proxy** is used as the method name of the message:
 
 ```javascript
 const myPayload = {x:Math.random()};
