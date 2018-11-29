@@ -50,6 +50,8 @@ class Warship extends AsyncEventEmitter {
 	}
 
 	async stop (force = false) {
+		for (const [name, processor] of this._methods)
+			await processor.stop(force);
 		await this._redis.stop(force);
 	}
 
@@ -79,8 +81,9 @@ class Warship extends AsyncEventEmitter {
 			}
 		);
 
+		this._methods = new Map();
 		this._methodsProxy = new Proxy(
-			new Map(),
+			this._methods,
 			{
 				get:(receivers, name) => {
 					if (!receivers.has(name)) {
