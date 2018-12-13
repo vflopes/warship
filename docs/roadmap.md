@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Create a way to handle stuck messages (maybe using `XCLAIM`?)
+- [x] Create a way to handle stuck messages (maybe using `XCLAIM`?)
 - [x] @warshipjs/rest - HTTP REST Payload Issuer
 - [ ] @warshipjs/websocket - Websocket RPC Payload Issuer
 - [ ] @warshipjs/unix-socket - Unix Socket Payload Issuer

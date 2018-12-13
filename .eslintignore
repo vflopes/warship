@@ -1,2 +1,3 @@
 fix/*
 test/*
+lib/prepare-ioredis.js

@@ -50,8 +50,8 @@ class Warship extends AsyncEventEmitter {
 	}
 
 	async stop (force = false) {
-		for (const [name, processor] of this._methods)
-			await processor.stop(force);
+		for (const [, processor] of this._methods)
+			await processor.stop(force, false);
 		await this._redis.stop(force);
 	}
 
@@ -90,11 +90,12 @@ class Warship extends AsyncEventEmitter {
 						const processor = new MethodProcessor(
 							{
 								namespace:this._namespace,
-								name:name+':'+shortid.generate()
+								name:name+':'+shortid.generate(),
+								method:name
 							},
 							this._redis
 						);
-						processor.configure({method:name}).on('message.received', (message) => {
+						processor.on('message.received', (message) => {
 							this._messageDecorator(message, {processor});
 							this.emit('message.pending', message);
 							processor.emit('message.pending', message);

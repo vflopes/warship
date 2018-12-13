@@ -11,6 +11,7 @@
 	- [Dispatcher](api-documentation/dispatcher.md)
 	- [Messenger](api-documentation/messenger.md)
 	- [MethodProcessor](api-documentation/method-processor.md)
+	- [Claimer](api-documentation/claimer.md)
 	- [Receiver](api-documentation/receiver.md)
 	- [RedisCollection](api-documentation/redis-collection.md)
 

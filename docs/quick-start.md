@@ -67,6 +67,14 @@ methodProcessor.methods.sum.prepare().then(() => {
 		console.log(`Message ${message.unique_id} resolved`);
 	}).on('error.async', (event, error, message) => console.log(event, error, message.unique_id)).run();
 
+	// Configure and run the claimer
+	methodProcessor.methods.sum.configure({
+		claimerOptions:{
+			messageTimeout:1000,
+			maxRetries:2
+		}
+	}).claimer.run();
+
 }).catch((error) => console.log(error));
 
 ```
@@ -90,6 +98,14 @@ methodProcessor.methods.divideByPI.prepare().then(() => {
 		await message.resolve();
 		console.log(`Message ${message.unique_id} resolved`);
 	}).on('error.async', (event, error, message) => console.log(event, error, message.unique_id)).run();
+
+	// Configure and run the claimer
+	methodProcessor.methods.divideByPI.configure({
+		claimerOptions:{
+			messageTimeout:1000,
+			maxRetries:2
+		}
+	}).claimer.run();
 
 }).catch((error) => console.log(error));
 
