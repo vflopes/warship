@@ -1,6 +1,6 @@
 {
   "name": "@warshipjs/core",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Event sourcing framework for independent services (a.k.a microservices)",
   "main": "index.js",
   "scripts": {
