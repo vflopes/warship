@@ -103,6 +103,24 @@ Number of retries after message was rejected. A retry is counted every time a re
 
 ---------------------------------
 
+#### message.isRejected()
+
+Returns a boolean indicating if the message is rejected.
+
+---------------------------------
+
+#### message.isResolved()
+
+Returns a boolean indicating if the message is resolved.
+
+---------------------------------
+
+#### message.isAcknowledged()
+
+Returns a boolean indicating if the message is acknowledged.
+
+---------------------------------
+
 #### message.toShortened()
 
 Returns the raw object with shortened keys (a.k.a encoded object).
@@ -135,10 +153,10 @@ Asynchrononous function to forward the message to a method. The `keepHistory` bo
 
 #### <small>decorated:</small> message.reject([ttl])
 
-Rejects a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous.
+Rejects a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous. If the message is not acknowledged it'll emit an automatic ack.
 
 ---------------------------------
 
 #### <small>decorated:</small> message.resolve([ttl])
 
-Resolves a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous.
+Resolves a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous. If the message is not acknowledged it'll emit an automatic ack.

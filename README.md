@@ -35,6 +35,10 @@ Warship uses [ioredis](https://github.com/luin/ioredis) and I discovered a bug w
 - Warship will modify **ioredis** files.
 - Warship will change the **ioredis** Redis class prototype to add Redis Streams commands.
 
+**Update**
+
+Fix merged into **ioredis** version **4.3.0**.
+
 ----------------------
 
 ### Testing

@@ -7,8 +7,7 @@
     "lint": "./node_modules/.bin/eslint --fix ./",
     "test": "bash test/run.sh",
     "test:integration": "env NODE_ENV=development mocha \"./test/**/*.spec.js\"",
-    "serve:docs": "node_modules/.bin/docsify serve ./docs",
-    "postinstall": "node ./fix"
+    "serve:docs": "node_modules/.bin/docsify serve ./docs"
   },
   "repository": {
     "type": "git",
@@ -28,13 +27,13 @@
   },
   "homepage": "https://vflopes.github.io/warship/#/",
   "dependencies": {
-    "ioredis": "^4.2.0",
+    "ioredis": "^4.3.0",
     "shortid": "^2.2.13"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "docsify-cli": "^4.3.0",
-    "eslint": "^5.9.0",
+    "eslint": "^5.11.1",
     "mocha": "^5.2.0"
   }
 }
