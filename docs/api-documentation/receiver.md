@@ -68,6 +68,16 @@ receiver.cancel(message);
 
 ---------------------------------
 
+#### receiver.commit(message[, keepHistory[, timeout]])
+
+This method is used to commit a message through Warship. It's like the `.forward()` method but it resolves the returned promise when the message is resolved or rejected by a method processor. The **timeout** parameter is the number of milliseconds to wait for the message to be resolved or rejected before call to abort. If the message is aborted the `alpha_code` property will be set to `'ETIMEOUT'`.
+
+```javascript
+const resolvedOrRejectedMessage = await receiver.commit(message);
+```
+
+---------------------------------
+
 #### Events: '[in|out].[state]', '[in|out].[method]', '[in|out].[state]:[method]'
 
 All these events are fired with a decorated message (see [Message](api-documentation/message.md)) when a new event from channel is received by Receiver's subscriber.

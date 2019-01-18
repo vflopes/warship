@@ -160,3 +160,10 @@ Rejects a message, the TTL is the number of milliseconds to keep the last messag
 #### <small>decorated:</small> message.resolve([ttl])
 
 Resolves a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous. If the message is not acknowledged it'll emit an automatic ack.
+Rejects a message, the TTL is the number of milliseconds to keep the last message forward cache, the default value is 0 (expire immediately). This method is asynchronous. If the message is not acknowledged it'll emit an automatic ack.
+
+---------------------------------
+
+#### <small>abort:</small> message.abort()
+
+Aborts the message (removes from stream using **XDEL** command). This method is asynchronous.

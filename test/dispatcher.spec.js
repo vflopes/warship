@@ -16,6 +16,7 @@ describe('RedisCollection', function () {
 		await redis.clients.flushClient.flushdb();
 		dispatcher = new Dispatcher('test-warship', redis);
 		message = messageFactory({payload:Math.random()}, false);
+		message.tracker_id = shortid.generate();
 		message.message_id = shortid.generate();
 	});
 
@@ -132,8 +133,8 @@ describe('RedisCollection', function () {
 
 			redis.clients.testOutSubscriber.on('message', (channel, shortenedMessage) => {
 				try {
-					expect(channel).to.be.equal('test-warship:out:testMethod')
 					const receivedMessage = messageFactory(JSON.parse(shortenedMessage));
+					expect(channel).to.be.equal('test-warship:out:testMethod:'+message.tracker_id)
 					expect(message.unique_id).to.be.equal(receivedMessage.unique_id);
 					done();
 				} catch (error) {
@@ -141,7 +142,7 @@ describe('RedisCollection', function () {
 				}
 			});
 
-			redis.clients.testOutSubscriber.subscribe('test-warship:out:testMethod').then(() => {
+			redis.clients.testOutSubscriber.subscribe('test-warship:out:testMethod:'+message.tracker_id).then(() => {
 				message.method = 'testMethod';
 				return dispatcher.giveBack(message);
 			}).catch(done);
