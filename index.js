@@ -8,15 +8,28 @@ const MethodProcessor = require('./lib/method-processor.js');
 const messageFactory = require('./lib/message-factory.js');
 const shortKeys = require('./lib/short-keys.js');
 
+var Redlock = null;
+
+try {
+	Redlock = require.main.require('redlock');
+} catch (error) {}
+
 class Warship extends AsyncEventEmitter {
 
-	constructor ({namespace} = {}, redisOptions = {}) {
+	constructor ({namespace, redlockOptions} = {}, redisOptions = {}) {
 
 		super();
 		this._namespace = namespace || 'warship';
 		this._redisOptions = redisOptions;
+		this._customDecorator = null;
+		this._redlockOptions = redlockOptions || {};
 		this.reset();
 
+	}
+
+	setCustomMessageDecorator (customDecorator = null) {
+		this._customDecorator = customDecorator;
+		return this;
 	}
 
 	_messageDecorator (message, {processor} = {}) {
@@ -38,6 +51,16 @@ class Warship extends AsyncEventEmitter {
 				await message.ack();
 			await this._messenger.reject(message, ttl);
 		};
+		if (this._redlock)
+			message.lock = async (ttl, lockName = 'global') => await this._redlock.lock(
+				`${this._namespace}:lock:${message.tracker_id}:${lockName}`,
+				ttl
+			);
+		if (this._customDecorator)
+			return this._customDecorator(message, {
+				warship:this,
+				processor
+			});
 		return message;
 	}
 
@@ -65,6 +88,29 @@ class Warship extends AsyncEventEmitter {
 		for (const [, processor] of this._methods)
 			await processor.stop(force, false);
 		await this._redis.stop(force);
+	}
+
+	createMethodProcessor (groupName, methods) {
+		const processor = new MethodProcessor(
+			{
+				namespace:this._namespace,
+				name:groupName+':'+shortid.generate(),
+				groupName,
+				methods
+			},
+			this._redis
+		);
+		processor.on('message.received', (message) => {
+			this._messageDecorator(message, {processor});
+			this.emit('message.pending', message);
+			processor.emit('message.pending', message);
+			processor.emit('message.pending:'+message.method, message);
+		});
+		this._methods.set(
+			groupName,
+			processor
+		);
+		return processor;
 	}
 
 	reset () {
@@ -97,27 +143,12 @@ class Warship extends AsyncEventEmitter {
 		this._methodsProxy = new Proxy(
 			this._methods,
 			{
-				get:(receivers, name) => {
-					if (!receivers.has(name)) {
-						const processor = new MethodProcessor(
-							{
-								namespace:this._namespace,
-								name:name+':'+shortid.generate(),
-								method:name
-							},
-							this._redis
-						);
-						processor.on('message.received', (message) => {
-							this._messageDecorator(message, {processor});
-							this.emit('message.pending', message);
-							processor.emit('message.pending', message);
-						});
-						receivers.set(
-							name,
-							processor
-						);
-					}
-					return receivers.get(name);
+				get:(processors, name) => {
+
+					if (!processors.has(name))
+						return this.createMethodProcessor(name, [name]);
+
+					return processors.get(name);
 				}
 			}
 		);
@@ -138,6 +169,9 @@ class Warship extends AsyncEventEmitter {
 				}
 			}
 		);
+
+		if (Redlock)
+			this._redlock = new Redlock([this._redis.clients.locker], this._redlockOptions);
 
 		return this;
 	}
