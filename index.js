@@ -12,7 +12,9 @@ var Redlock = null;
 
 try {
 	Redlock = require.main.require('redlock');
-} catch (error) {}
+} catch (error) {
+	Redlock = null;
+}
 
 class Warship extends AsyncEventEmitter {
 

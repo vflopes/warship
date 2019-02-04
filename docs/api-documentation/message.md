@@ -103,6 +103,18 @@ Number of retries after message was rejected. A retry is counted every time a re
 
 ---------------------------------
 
+#### message.reply_to
+
+An array with channels names to reply to receivers waiting using the method `Receiver.fromChannels()`.
+
+---------------------------------
+
+#### message.exclusive
+
+A boolean indicating that the message should be exclusively returned to `reply_to` channels.
+
+---------------------------------
+
 #### message.isRejected()
 
 Returns a boolean indicating if the message is rejected.
@@ -164,6 +176,12 @@ Rejects a message, the TTL is the number of milliseconds to keep the last messag
 
 ---------------------------------
 
-#### <small>abort:</small> message.abort()
+#### <small>decorated:</small> message.lock(ttl[, lockName])
+
+If [redlock](https://www.npmjs.com/package/redlock) package is installed into your project this method will be available in all messages. The first argument is the ttl to be passed to `Redlock.lock()` method, and `lockName` defaults to `'global'` you can change this value to create multiple locks to the same message. This method is asynchronous.
+
+---------------------------------
+
+#### <small>decorated:</small> message.abort()
 
 Aborts the message (removes from stream using **XDEL** command). This method is asynchronous.

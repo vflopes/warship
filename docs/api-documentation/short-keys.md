@@ -22,3 +22,5 @@ This page is a documentation of the 1x1 relation between the short and expanded 
 | sr    | resolved           |
 | se    | rejected           |
 | rs    | retries            |
+| rt    | reply_to           |
+| ex    | exclusive          |

@@ -29,6 +29,22 @@ Prepare the receiver to listen **out** channels from specified methods. If no me
 
 ---------------------------------
 
+#### receiver.fromChannels([...channels])
+
+Prepare the receiver to listen custom channels. This is very useful to ensure that resolved/reject messages are returned to single payload issuer. Messages with **reply_to** channels keep publishing in normal **out** channels unless you set `message.exclusive` to `true`.
+
+```javascript
+await receiver.onAwait('out.sum', async (message) => {
+	// Do something with the message.
+}).fromChannels('sumCustom').listen();
+
+const message = payloadIssuer.message.sum({x:1,y:2});
+message.reply_to.push('sumCustom');
+await message.forward();
+```
+
+---------------------------------
+
 #### receiver.reset()
 
 Resets the channels from previous calls to `receiver.fromOut()` and/or `receiver.fromIn()`. The returned value is a reference to `Receiver` itself.

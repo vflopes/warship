@@ -35,6 +35,7 @@ This method configures the `MethodProcessor` instance. The returned value is a r
 - `count` - number of maximum parallel messages being processed (a.k.a maximum `pendingAcks` value). The default value is `10`.
 - `block` - time to block the [XREADGROUP](https://redis.io/commands/xreadgroup) command sent to Redis. See the `BLOCK` parameter in Redis documentation. The default value is `1000` milliseconds (1 second).
 - `claimerOptions` - if specified as an object, this value will be passed to the [Claimer](api-documentation/claimer.md) constructor as the first parameter that will be availabe through `methodProcessor.claimer`, otherwise this property will be null.
+- `groupName` - the consumer group name that will be used to receive messages from methods streams, if not specified, the class will generate an unique hash of methods supported by the MP.
 
 ---------------------------------
 
@@ -54,3 +55,8 @@ Prepares Redis to run the processor (creates the required consumer group). The `
 
 Stops the processor. The `force` argument indicates if the processor should close the connections with Redis immediately and the default value is `false`. The `stopClients` parameter will also stop all clients connected to Redis, the default value is `true`. This method is asynchronous.
 
+---------------------------------
+
+#### Events: 'message.pending:[method]'
+
+Emmitted when a new pending message is received to be processed.
