@@ -1,6 +1,6 @@
 {
   "name": "@warshipjs/core",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Event sourcing framework for independent services (a.k.a microservices)",
   "main": "index.js",
   "scripts": {
@@ -18,8 +18,8 @@
     "redis",
     "event",
     "sourcing",
-	"queue",
-	"elasticsearch"
+    "queue",
+    "elasticsearch"
   ],
   "author": "Victor França Lopes",
   "license": "MIT",
