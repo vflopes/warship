@@ -1,6 +1,6 @@
 # AsyncEventEmitter
 
-This class extends [EventEmitter](https://nodejs.org/docs/latest/api/events.html) from NodeJS and implements two methods to handle asynchronous event listeners.
+This class extends [EventEmitter3](https://github.com/primus/eventemitter3) from NodeJS and implements two methods to handle asynchronous event listeners.
 
 ---------------------------------
 

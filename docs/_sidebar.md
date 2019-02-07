@@ -14,6 +14,8 @@
 	- [Claimer](api-documentation/claimer.md)
 	- [Receiver](api-documentation/receiver.md)
 	- [RedisCollection](api-documentation/redis-collection.md)
+	- [EventStore](api-documentation/event-store.md)
+	- [ElasticsearchEventStore](api-documentation/elasticsearch-event-store.md)
 
 - [Roadmap](roadmap.md)
 - [@warshipjs/*](warship-packages.md)

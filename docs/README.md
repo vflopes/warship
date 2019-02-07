@@ -60,3 +60,42 @@ The basic message flow from **Client** to **Method Processor**. If you want to r
 |                    +----------------------------->                |
 +--------------------+                             +----------------+
 ```
+
+---------------------------------
+
+### v2.1.0 (2019-02-07)
+
+Warship evolved as a project and now we're proud to announce some great features in version 2.1.0.
+
+###### EventStore
+
+By default Warship stores all messages and correlated values in Redis. This is great for performance, but depending on the case it will cost you a huge amount of memory. Warship by itself doesn't store a lot of data in Redis but the payload size of your message is up to your application.
+
+To solve this and make the message data persistence layer flexible, we implemented the **EventStore** which let you create your custom store for message's data. And more, we're shipping a ready-to-use **EventStore** backed by Elasticsearch!
+
+```javascript
+const Warship = require('@warshipjs/core');
+const elasticsearch = require('elasticsearch');
+
+const {ElasticsearchEventStore} = Warship;
+
+const esClient = elasticsearch.Client({host:'http://localhost:9200'});
+const eventStore = new ElasticsearchEventStore(esClient, {indexName:'test-warship'});
+const methodProcessor = new Warship({namespace:'test-warship', eventStore}, {port:6379, host:'127.0.0.1'});
+
+methodProcessor.methods.sum.onAwait('message.pending', async (message) => {
+	// Loaded from Elasticsearch!
+	message = await message.load();
+	message.payload = {z:message.payload.x+message.payload.y};
+	await message.ack();
+	await message.resolve();
+}).on('error.async', (event, error) => done(error)).run();
+```
+
+###### Message Cryptography
+
+Is really boring to deal with sensitive data on a event sourcing environment. To finally solve this problems the methods `Message.encrypt()` and `Message.decrypt()` were implemented making your life easier.
+
+###### Performance improvement: EventEmitter3
+
+As Warship heavily uses events to handle messages flow we changed all event emitters from native NodeJS EventEmitter to [EventEmitter3](https://github.com/primus/eventemitter3) package.

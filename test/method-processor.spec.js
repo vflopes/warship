@@ -1,19 +1,24 @@
 'use strict';
 const Warship = require('../');
+const RedisCollection = require('../lib/redis-collection.js');
 const {expect} = require('chai');
 
 describe('Method Processor', function () {
 
 	var methodProcessor;
 	var payloadIssuer;
+	var redis;
 
 	beforeEach(async function () {
+		redis = new RedisCollection({port:6379, host:'127.0.0.1'});
+		await redis.clients.flushClient.flushall();
 		methodProcessor = new Warship({namespace:'test-warship'}, {port:6379, host:'127.0.0.1'});
 		payloadIssuer = new Warship({namespace:'test-warship'}, {port:6379, host:'127.0.0.1'});
 		await methodProcessor.methods.sum.prepare();
 	});
 
 	afterEach(async function () {
+		await redis.stop(true);
 		await methodProcessor.stop();
 		await payloadIssuer.stop();
 	});

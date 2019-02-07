@@ -1,3 +1,4 @@
 fix/*
 test/*
 lib/prepare-ioredis.js
+lib/event-store.js

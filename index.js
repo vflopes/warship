@@ -1,6 +1,8 @@
 'use strict';
 const shortid = require('shortid');
 const AsyncEventEmitter = require('./lib/async-event-emitter.js');
+const EventStore = require('./lib/event-store.js');
+const ElasticsearchEventStore = require('./lib/elasticsearch-event-store.js');
 const Receiver = require('./lib/receiver.js');
 const Messenger = require('./lib/messenger.js');
 const RedisCollection = require('./lib/redis-collection.js');
@@ -18,11 +20,12 @@ try {
 
 class Warship extends AsyncEventEmitter {
 
-	constructor ({namespace, redlockOptions} = {}, redisOptions = {}) {
+	constructor ({namespace, redlockOptions, eventStore} = {}, redisOptions = {}) {
 
 		super();
 		this._namespace = namespace || 'warship';
 		this._redisOptions = redisOptions;
+		this._eventStore = eventStore || null;
 		this._customDecorator = null;
 		this._redlockOptions = redlockOptions || {};
 		this.reset();
@@ -118,7 +121,16 @@ class Warship extends AsyncEventEmitter {
 	reset () {
 
 		this._redis = new RedisCollection(this._redisOptions);
-		this._messenger = new Messenger({namespace:this._namespace}, this._redis);
+		this._messenger = new Messenger({
+			namespace:this._namespace,
+			eventStore:this._eventStore
+		}, this._redis);
+
+		if (this._eventStore)
+			this._eventStore.inject({
+				namespace:this._namespace,
+				redis:this._redis
+			});
 
 		this._receiversProxy = new Proxy(
 			new Map(),
@@ -182,5 +194,7 @@ class Warship extends AsyncEventEmitter {
 
 Warship.shortKeys = shortKeys;
 Warship.AsyncEventEmitter = AsyncEventEmitter;
+Warship.EventStore = EventStore;
+Warship.ElasticsearchEventStore = ElasticsearchEventStore;
 
 module.exports = Warship;

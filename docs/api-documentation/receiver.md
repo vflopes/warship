@@ -63,30 +63,17 @@ Stops the receiver (unsubscribe from channels). The `force` argument tells the r
 
 ---------------------------------
 
-#### receiver.processed(message[, method])
-
-This is an asynchronous method to await for messages to be resolved or rejected, you can optionally specify a method which the message should be resolved or rejected.
-
-```javascript
-receiver.processed(message).then((message) => console.log(message.state)).catch(() => console.log('canceled'));
-```
-
----------------------------------
-
-#### receiver.cancel(message[, method])
-
-This method cancel all `Receiver.processed` calls from a message (by `tracker_id`), optionally you can cancel only for the specified method. The `Receiver.processed` will be rejected without error.
-
-```javascript
-receiver.processed(message).catch(() => console.log('canceled'));
-receiver.cancel(message);
-```
-
----------------------------------
-
 #### receiver.commit(message[, keepHistory[, timeout]])
+###### overload: receiver.commit(message[, options])
 
 This method is used to commit a message through Warship. It's like the `.forward()` method but it resolves the returned promise when the message is resolved or rejected by a method processor. The **timeout** parameter is the number of milliseconds to wait for the message to be resolved or rejected before call to abort. If the message is aborted the `alpha_code` property will be set to `'ETIMEOUT'`.
+
+The `options` object accepts the following properties:
+
+- `keepHistory`
+- `timeout`
+- `channelName` - the channel name which the message will be received, the default channel is the internal channel name used by Warship MPs to publish resolved/rejected messages, it can be used for messages with `reply_to` specification.
+- `unsubscribe` - this parameter tells to receiver to unsubscribe the commit Redis client from the channel after the message is received, only set this parameter to `true` if your application will not commit messages with the same method, the default value is `false`.
 
 ```javascript
 const resolvedOrRejectedMessage = await receiver.commit(message);

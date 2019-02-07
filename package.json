@@ -18,21 +18,24 @@
     "redis",
     "event",
     "sourcing",
-    "queue"
+	"queue",
+	"elasticsearch"
   ],
   "author": "Victor França Lopes",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vflopes/warship/issues"
   },
-  "homepage": "https://vflopes.github.io/warship/#/",
+  "homepage": "https://warship.js.org/",
   "dependencies": {
+    "eventemitter3": "^3.1.0",
     "ioredis": "^4.3.0",
     "shortid": "^2.2.13"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "docsify-cli": "^4.3.0",
+    "elasticsearch": "^15.4.1",
     "eslint": "^5.11.1",
     "mocha": "^5.2.0",
     "redlock": "^3.1.2"

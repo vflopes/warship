@@ -145,6 +145,30 @@ Returns the raw object with expanded keys (a.k.a decoded object).
 
 ---------------------------------
 
+#### message.encrypt(options)
+
+This method will encrypt the message's payload. Valid `options` are:
+
+- `algorithm` - the algorithm that will encrypt the message, default value is: `'aes-192-cbc'`.
+- `iv` - the initialization vector for cipher, default value is a zero filled 16 bytes buffer.
+- `key` - the key used to encrypt the message payload.
+
+Return a reference to the message itself.
+
+---------------------------------
+
+#### message.decrypt(options)
+
+This method will decrypt the message's payload. Valid `options` are:
+
+- `algorithm` - the algorithm that will decrypt the message, default value is: `'aes-192-cbc'`.
+- `iv` - the initialization vector for decipher, default value is a zero filled 16 bytes buffer.
+- `key` - the key used to decrypt the message payload.
+
+Return a reference to the message itself.
+
+---------------------------------
+
 #### <small>decorated:</small> message.ack()
 
 An asynchronous function to acknowledge a message. This is an alias to call `MethodProcessor.ack()`. This method is only decorated when the message is emitted by a `'message.pending'` event from `Warship` or `MethodProcessor` class.

@@ -10,6 +10,7 @@ The first argument is an object with options to build new instance of warship.
 
 - `namespace` - this option must be a string to prefix the keys used by Warship in Redis. The default value is `'warship'`.
 - `redlockOptions` - options to be passed to `Redlock` if you have installed [redlock](https://www.npmjs.com/package/redlock) into your project.
+- `eventStore` - you can use this option to specify a custom `EventStore`.
 
 The second argument is passed directly to [ioredis](https://github.com/luin/ioredis/) with addition of:
 
@@ -25,13 +26,25 @@ This is an object with two properties:
 - `encoding` - keys are the expanded keys and values the short keys.
 - `decoding` - keys are the short keys and values the expanded keys.
 
-These keys are used to encode and decode objects and keys before passing to Redis. This strategy reduces the overhead of the data structure used by Warship.s
+These keys are used to encode and decode objects and keys before passing to Redis. This strategy reduces the overhead of the data structure used by Warship.
 
 ---------------------------------
 
 #### Warship.AsyncEventEmitter
 
 Constructor of [AsyncEventEmitter](api-documentation/async-event-emitter.md).
+
+---------------------------------
+
+#### Warship.EventStore
+
+Constructor of [EventStore](api-documentation/event-store.md).
+
+---------------------------------
+
+#### Warship.ElasticsearchEventStore
+
+Constructor of [ElasticsearchEventStore](api-documentation/elasticsearch-event-store.md).
 
 ---------------------------------
 

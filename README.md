@@ -43,7 +43,7 @@ Fix merged into **ioredis** version **4.3.0**.
 
 ### Testing
 
-The tests use Docker, so be sure that your user can run `redis:5` image.
+The tests use Docker, so be sure that your user can run `redis:5` and ` docker.elastic.co/elasticsearch/elasticsearch:6.6.0` image.
 
 ```
 npm test

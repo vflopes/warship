@@ -1,19 +1,24 @@
 'use strict';
 const Warship = require('../');
+const RedisCollection = require('../lib/redis-collection.js');
 const {expect} = require('chai');
 
 describe('Payload Issuer', function () {
 
 	var methodProcessor;
 	var payloadIssuer;
+	var redis;
 
 	beforeEach(async function () {
+		redis = new RedisCollection({port:6379, host:'127.0.0.1'});
+		await redis.clients.flushClient.flushall();
 		methodProcessor = new Warship({namespace:'test-warship'}, {port:6379, host:'127.0.0.1'});
 		payloadIssuer = new Warship({namespace:'test-warship'}, {port:6379, host:'127.0.0.1'});
 		await methodProcessor.methods.sum.prepare();
 	});
 
 	afterEach(async function () {
+		await redis.stop(true);
 		await methodProcessor.stop();
 		await payloadIssuer.stop();
 	});
@@ -39,45 +44,6 @@ describe('Payload Issuer', function () {
 			done();
 		}).on('error.async', (event, error) => done(error)).fromOut('sum').listen().then(() => {
 			payloadIssuer.message.sum(payload).forward().catch(done);
-		}).catch((error) => done(error));
-
-	});
-
-	it('Should receive message feedback from one message (resolved)', function (done) {
-
-		const payload = {
-			x:Math.random(),
-			y:Math.random()
-		};
-
-		methodProcessor.methods.sum.onAwait('message.pending', async (message) => {
-			message = await message.load();
-			message.payload = {z:message.payload.x+message.payload.y};
-			await message.ack();
-			await message.resolve();
-		}).on('error.async', (event, error) => done(error)).run();
-
-		payloadIssuer.receivers.sum.fromOut('sum').listen().then(() => {
-			const message = payloadIssuer.message.sum(payload);
-			message.generateTrackerId();
-			payloadIssuer.receivers.sum.processed(message).then(() => done());
-			return message.forward();
-		}).catch((error) => done(error));
-
-	});
-
-	it('Should receive message feedback from one message (rejected)', function (done) {
-
-		const payload = {
-			x:Math.random(),
-			y:Math.random()
-		};
-
-		payloadIssuer.receivers.sum.fromOut('sum').listen().then(() => {
-			const message = payloadIssuer.message.sum(payload);
-			message.generateTrackerId();
-			payloadIssuer.receivers.sum.processed(message).catch(() => done());
-			payloadIssuer.receivers.sum.cancel(message);
 		}).catch((error) => done(error));
 
 	});
