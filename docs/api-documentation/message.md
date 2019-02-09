@@ -209,3 +209,9 @@ If [redlock](https://www.npmjs.com/package/redlock) package is installed into yo
 #### <small>decorated:</small> message.abort()
 
 Aborts the message (removes from stream using **XDEL** command). This method is asynchronous.
+
+---------------------------------
+
+#### <small>decorated:</small> message.commit(receiver[, options])
+
+This method is decorated only when messages are created from `Warship.messages` proxy, and will behave exactly like `Receiver.commit()` method, except that will use a custom `reply_to` channel to receive the message result reducing the network overload.

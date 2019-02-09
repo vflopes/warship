@@ -28,6 +28,6 @@ This method is called when the message is stored (inserted or updated).
 
 ---------------------------------
 
-#### eventStore.rename(message)
+#### eventStore.rename(message, oldUniqueId)
 
 This method is called when the `message_id` value from message is renewed.

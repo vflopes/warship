@@ -3,16 +3,16 @@ const Warship = require('../');
 const RedisCollection = require('../lib/redis-collection.js');
 const {expect} = require('chai');
 const elasticsearch = require('elasticsearch');
-const {ElasticsearchEventStore} = Warship;
+const {RelasticEventStore} = Warship;
 
-describe('Payload Issuer Commit (Elasticsearch EventStore)', function () {
+describe('Payload Issuer Commit (Relastic EventStore)', function () {
 
 	var methodProcessor;
 	var payloadIssuer;
 	var redis;
 
 	const esClient = elasticsearch.Client({host:'http://localhost:9200'});
-	const eventStore = new ElasticsearchEventStore(esClient, {indexName:'test-warship'});
+	const eventStore = new RelasticEventStore(null, esClient, {indexName:'test-warship'});
 
 	beforeEach(async function () {
 		redis = new RedisCollection({port:6379, host:'127.0.0.1'});

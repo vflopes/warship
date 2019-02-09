@@ -3,6 +3,8 @@ const shortid = require('shortid');
 const AsyncEventEmitter = require('./lib/async-event-emitter.js');
 const EventStore = require('./lib/event-store.js');
 const ElasticsearchEventStore = require('./lib/elasticsearch-event-store.js');
+const RedisEventStore = require('./lib/redis-event-store.js');
+const RelasticEventStore = require('./lib/relastic-event-store.js');
 const Receiver = require('./lib/receiver.js');
 const Messenger = require('./lib/messenger.js');
 const RedisCollection = require('./lib/redis-collection.js');
@@ -121,16 +123,20 @@ class Warship extends AsyncEventEmitter {
 	reset () {
 
 		this._redis = new RedisCollection(this._redisOptions);
+
+		if (!this._eventStore)
+			this._eventStore = new RedisEventStore(this._redis);
+
+		this._eventStore.inject({
+			namespace:this._namespace,
+			redis:this._redis
+		});
+
 		this._messenger = new Messenger({
 			namespace:this._namespace,
 			eventStore:this._eventStore
 		}, this._redis);
 
-		if (this._eventStore)
-			this._eventStore.inject({
-				namespace:this._namespace,
-				redis:this._redis
-			});
 
 		this._receiversProxy = new Proxy(
 			new Map(),
@@ -142,7 +148,7 @@ class Warship extends AsyncEventEmitter {
 							new Receiver(
 								{
 									namespace:this._namespace,
-									messageDecorator:(message) => this._messageDecorator(message),
+									messageDecorator:this._messageDecorator.bind(this),
 									name
 								},
 								this._redis
@@ -179,6 +185,15 @@ class Warship extends AsyncEventEmitter {
 						async (...fields) =>
 							await this._messenger.dispatcher.load(message, ...fields);
 					message.abort = async () => await this._messenger.abort(message);
+					message.commit = async (receiver, options = {}) => {
+						const channelName = 'recvr-'+receiver.receiverId;
+						if (!message.reply_to.includes(channelName))
+							message.reply_to.push(channelName);
+						return await receiver.commit(message, {
+							...options,
+							channelName
+						});
+					};
 					return message;
 				}
 			}
@@ -196,5 +211,7 @@ Warship.shortKeys = shortKeys;
 Warship.AsyncEventEmitter = AsyncEventEmitter;
 Warship.EventStore = EventStore;
 Warship.ElasticsearchEventStore = ElasticsearchEventStore;
+Warship.RedisEventStore = RedisEventStore;
+Warship.RelasticEventStore = RelasticEventStore;
 
 module.exports = Warship;

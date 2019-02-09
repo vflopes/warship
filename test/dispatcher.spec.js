@@ -1,5 +1,6 @@
 'use strict';
 const RedisCollection = require('../lib/redis-collection.js');
+const RedisEventStore = require('../lib/redis-event-store.js');
 const Dispatcher = require('../lib/dispatcher.js');
 const messageFactory = require('../lib/message-factory.js');
 const {expect} = require('chai');
@@ -10,11 +11,13 @@ describe('RedisCollection', function () {
 	var redis;
 	var dispatcher;
 	var message;
+	var eventStore;
 
 	beforeEach(async function () {
 		redis = new RedisCollection({port:6379, host:'127.0.0.1'});
+		eventStore = new RedisEventStore(redis);
 		await redis.clients.flushClient.flushdb();
-		dispatcher = new Dispatcher('test-warship', redis);
+		dispatcher = new Dispatcher('test-warship', redis, {eventStore});
 		message = messageFactory({payload:Math.random()}, false);
 		message.tracker_id = shortid.generate();
 		message.message_id = shortid.generate();

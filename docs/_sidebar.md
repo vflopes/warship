@@ -15,7 +15,9 @@
 	- [Receiver](api-documentation/receiver.md)
 	- [RedisCollection](api-documentation/redis-collection.md)
 	- [EventStore](api-documentation/event-store.md)
+	- [RedisEventStore](api-documentation/redis-event-store.md)
 	- [ElasticsearchEventStore](api-documentation/elasticsearch-event-store.md)
+	- [RelasticEventStore](api-documentation/relastic-event-store.md)
 
 - [Roadmap](roadmap.md)
 - [@warshipjs/*](warship-packages.md)

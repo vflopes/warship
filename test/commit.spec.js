@@ -60,6 +60,44 @@ describe('Payload Issuer Commit', function () {
 		}
 
 	});
+
+	it('Should receive message feedback after "commit" message method', function (done) {
+
+		this.timeout(20000);
+
+		methodProcessor.methods.sum.onAwait('message.pending', async (message) => {
+			message = await message.load();
+			message.payload = {z:message.payload.x+message.payload.y};
+			await message.ack();
+			await message.resolve();
+		}).on('error.async', (event, error) => done(error)).run();
+
+		let finishCount = 0;
+		const finish = () => {
+			finishCount++;
+			if (finishCount === 10)
+				done();
+		};
+
+		for (let i = 0; i < 10; i++) {
+
+			let payload = {
+				x:Math.random(),
+				y:Math.random()
+			};
+
+			payloadIssuer.message.sum(payload).commit(
+				payloadIssuer.receivers.sum
+			).then((message) => {
+				expect(message.payload).to.be.an('object');
+				expect(message.payload.z).to.be.a('number');
+				expect(message.payload.z).to.be.equal(payload.x+payload.y);
+				finish();
+			}).catch(done);
+
+		}
+
+	});
 	
 	it('Should abort message', function (done) {
 
