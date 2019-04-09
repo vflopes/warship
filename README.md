@@ -1,3 +1,9 @@
+# DEPRECATION WARNING
+
+Due to some design problems that would probably require rewriting, I started another project that is much more efficient and agnostic to payload: https://github.com/exocet-engineering/hfx-bus
+
+----------------
+
 # Warship
 
 Warship is a framework to build distributed systems (a.k.a microservices) aided by event sourcing and task streaming strategies using Redis as core engine. This package is the core to operate an endpoint as **payload issuer** or **method processor** or both (although is not recommended). But first let's introduce some terms and concepts adopted in Warship environment:
